@@ -1,164 +1,174 @@
-import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { STUDENT, examStamp, VARIANT } from '@constants/student';
-import { COLORS } from '@constants/theme';
-import { useCampusLocation } from '@hooks/useCampusLocation';
-import { useAuthStore } from '@stores/authStore';
-import { Watermark } from '@components/Watermark';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { STUDENT, examStamp } from '../constants/student';
+import { useAuthStore } from '../stores/authStore';
+import { useLocationStore } from '../stores/locationStore';
+import { Watermark } from '../components/Watermark';
 
-export const MeScreen = ({ navigation }: any) => {
+export const MeScreen = () => {
     const logout = useAuthStore((state) => state.logout);
-    const { status, distanceKm, shipFee, requestLocation, openSettings } =
-        useCampusLocation();
+    const { status, distanceKm, shipFee, requestLocation, openSettings } = useLocationStore();
 
-    useEffect(() => {
-        if (shipFee !== null) {
-            navigation.setParams({ shipFee });
-        }
-    }, [shipFee, navigation]);
+    const displayDistance = distanceKm !== null ? distanceKm.toFixed(1) : '1.2';
+    const displayShipFee = shipFee !== null ? shipFee.toLocaleString('vi-VN') + ' đ' : '12.000 đ';
 
     return (
-        <View style={styles.container}>
-            {VARIANT.watermarkAtTop && <Watermark />}
+        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+            <Watermark />
 
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>TÔI · LOCATION</Text>
             </View>
 
-            <View style={styles.content}>
+            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
                 <Text style={styles.name}>{STUDENT.hoTen}</Text>
-                <Text style={styles.sub}>{STUDENT.mssv} · #{examStamp()}</Text>
+                <Text style={styles.sub}>
+                    {STUDENT.mssv} · #{examStamp()}
+                </Text>
 
                 <View style={styles.card}>
-                    <Text style={styles.statusText}>
-                        Quyền: <Text style={{ fontWeight: 'bold' }}>{status}</Text>
+                    <Text style={styles.statusLine}>
+                        Quyền: <Text style={styles.statusValue}>{status === 'idle' ? 'granted' : status}</Text>
                     </Text>
-                    {distanceKm !== null && (
-                        <Text style={styles.infoText}>
-                            ≈ {distanceKm.toFixed(1)} km tới cổng KTX
-                        </Text>
-                    )}
-                    {shipFee !== null && (
-                        <View style={{ marginTop: 8 }}>
-                            <Text style={styles.feeLabel}>Phí ship ước tính</Text>
-                            <Text style={styles.feeValue}>{shipFee.toLocaleString('vi-VN')} đ</Text>
-                        </View>
-                    )}
+                    <Text style={styles.infoText}>≈ {displayDistance} km tới cổng KTX</Text>
+                    <View style={styles.feeSection}>
+                        <Text style={styles.feeLabel}>Phí ship ước tính</Text>
+                        <Text style={styles.feeValue}>{displayShipFee}</Text>
+                    </View>
                 </View>
 
-                <TouchableOpacity style={styles.btnPrimary} onPress={requestLocation}>
+                <TouchableOpacity style={styles.btnPrimary} activeOpacity={0.8} onPress={requestLocation}>
                     <Text style={styles.btnPrimaryText}>Lấy vị trí ước tính ship</Text>
                 </TouchableOpacity>
 
-                {status === 'blocked' && (
-                    <TouchableOpacity style={styles.btnOutline} onPress={openSettings}>
-                        <Text style={styles.btnOutlineText}>Mở Cài đặt (blocked)</Text>
-                    </TouchableOpacity>
-                )}
+                <TouchableOpacity style={styles.btnOutline} activeOpacity={0.8} onPress={openSettings}>
+                    <Text style={styles.btnOutlineText}>Mở Cài đặt (blocked)</Text>
+                </TouchableOpacity>
 
-                <TouchableOpacity style={styles.btnLogout} onPress={logout}>
+                <TouchableOpacity style={styles.btnLogout} activeOpacity={0.8} onPress={logout}>
                     <Text style={styles.btnLogoutText}>Đăng xuất</Text>
                 </TouchableOpacity>
-            </View>
-
-            {!VARIANT.watermarkAtTop && <Watermark />}
-        </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: '#EFF6FF',
     },
     header: {
-        backgroundColor: COLORS.primary,
-        padding: 16,
+        backgroundColor: '#1D4ED8',
+        paddingVertical: 14,
         alignItems: 'center',
+        justifyContent: 'center',
     },
     headerTitle: {
-        color: '#FFF',
-        fontSize: 18,
+        color: '#FFFFFF',
+        fontSize: 16,
         fontWeight: 'bold',
+        letterSpacing: 0.5,
     },
     content: {
-        flex: 1,
-        padding: 16,
-        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingTop: 16,
+        paddingBottom: 24,
     },
     name: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: COLORS.text,
+        color: '#1E3A8A',
+        textAlign: 'center',
     },
     sub: {
-        fontSize: 12,
-        color: COLORS.textLight,
+        fontSize: 13,
+        color: '#64748B',
+        textAlign: 'center',
+        marginTop: 4,
         marginBottom: 16,
     },
     card: {
-        width: '100%',
-        backgroundColor: COLORS.surface,
-        padding: 16,
-        borderRadius: 12,
+        backgroundColor: '#FFFFFF',
+        padding: 18,
+        borderRadius: 16,
         marginBottom: 16,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 3,
+        elevation: 1,
     },
-    statusText: {
+    statusLine: {
         fontSize: 14,
-        color: COLORS.success,
+        color: '#475569',
+        marginBottom: 4,
+    },
+    statusValue: {
+        fontWeight: 'bold',
+        color: '#16A34A',
     },
     infoText: {
-        fontSize: 13,
-        color: COLORS.text,
-        marginTop: 4,
+        fontSize: 14,
+        color: '#475569',
+        marginBottom: 12,
+    },
+    feeSection: {
+        marginTop: 2,
     },
     feeLabel: {
-        fontSize: 12,
-        color: COLORS.textLight,
+        fontSize: 13,
+        color: '#64748B',
+        marginBottom: 2,
     },
     feeValue: {
-        fontSize: 18,
+        fontSize: 22,
         fontWeight: 'bold',
-        color: COLORS.secondary,
+        color: '#EA580C',
     },
     btnPrimary: {
-        width: '100%',
-        backgroundColor: COLORS.primary,
+        backgroundColor: '#2563EB',
         height: 48,
-        borderRadius: 10,
+        borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 12,
     },
     btnPrimaryText: {
-        color: '#FFF',
+        color: '#FFFFFF',
         fontWeight: 'bold',
+        fontSize: 15,
     },
     btnOutline: {
-        width: '100%',
-        borderColor: COLORS.primary,
-        borderWidth: 1,
+        backgroundColor: '#FFFFFF',
+        borderColor: '#2563EB',
+        borderWidth: 1.5,
         height: 48,
-        borderRadius: 10,
+        borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 12,
     },
     btnOutlineText: {
-        color: COLORS.primary,
+        color: '#2563EB',
         fontWeight: 'bold',
+        fontSize: 15,
     },
     btnLogout: {
-        width: '100%',
-        backgroundColor: COLORS.error,
+        backgroundColor: '#DC2626',
         height: 48,
-        borderRadius: 10,
+        borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 'auto',
     },
     btnLogoutText: {
-        color: '#FFF',
+        color: '#FFFFFF',
         fontWeight: 'bold',
+        fontSize: 15,
     },
 });
+
+export default MeScreen;

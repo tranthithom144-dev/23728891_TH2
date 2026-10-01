@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { STUDENT } from '@constants/student';
+import { STUDENT } from '../constants/student';
 
 export const apiClient = axios.create({
     baseURL: 'https://fakestoreapi.com',

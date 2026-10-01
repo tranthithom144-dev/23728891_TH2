@@ -1,23 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS } from '@constants/theme';
-import { STUDENT, VARIANT } from '@constants/student';
-import { Watermark } from '@components/Watermark';
-import { useAuthStore } from '@stores/authStore';
+import { STUDENT, VARIANT } from '../constants/student';
+import { Watermark } from '../components/Watermark';
+import { useAuthStore } from '../stores/authStore';
 
 export const LoginScreen = () => {
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState('0867457005');
     const login = useAuthStore((state) => state.login);
 
     const placeholder =
-        VARIANT.authField === 'email'
-            ? `Email — ${STUDENT.mssv}@iuh.edu.vn`
-            : `Số điện thoại — 09${STUDENT.mssv.slice(-8)}`;
+        VARIANT.authField === 'email' ? 'Email — student@iuh.edu.vn' : 'Số điện thoại — 0867457005';
 
     return (
-        <SafeAreaView style={styles.container}>
-            {VARIANT.watermarkAtTop && <Watermark />}
+        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+            <Watermark />
 
             <View style={styles.content}>
                 <Text style={styles.title}>KTXGO</Text>
@@ -26,20 +23,18 @@ export const LoginScreen = () => {
                 <TextInput
                     style={styles.input}
                     placeholder={placeholder}
-                    placeholderTextColor={COLORS.textLight}
+                    placeholderTextColor="#64748B"
                     value={value}
                     onChangeText={setValue}
                     keyboardType={VARIANT.authField === 'email' ? 'email-address' : 'phone-pad'}
                 />
 
-                <TouchableOpacity style={styles.button} onPress={() => login(value)}>
+                <TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={() => login(value)}>
                     <Text style={styles.buttonText}>Vào cửa hàng</Text>
                 </TouchableOpacity>
 
                 <Text style={styles.footerNote}>Auth Stack · chưa có token</Text>
             </View>
-
-            {!VARIANT.watermarkAtTop && <Watermark />}
         </SafeAreaView>
     );
 };
@@ -47,8 +42,7 @@ export const LoginScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
-        justifyContent: 'space-between',
+        backgroundColor: '#EFF6FF',
     },
     content: {
         flex: 1,
@@ -59,42 +53,42 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 36,
         fontWeight: 'bold',
-        color: COLORS.primary,
+        color: '#1D4ED8',
         marginBottom: 4,
     },
     subtitle: {
         fontSize: 14,
-        color: COLORS.textLight,
+        color: '#64748B',
         marginBottom: 32,
     },
     input: {
         width: '100%',
         height: 50,
-        backgroundColor: COLORS.surface,
-        borderColor: COLORS.border,
-        borderWidth: 1,
+        backgroundColor: '#FFFFFF',
+        borderColor: '#BFDBFE',
+        borderWidth: 1.5,
         borderRadius: 12,
         paddingHorizontal: 16,
         fontSize: 14,
-        color: COLORS.text,
+        color: '#1E3A8A',
         marginBottom: 16,
     },
     button: {
         width: '100%',
         height: 50,
-        backgroundColor: COLORS.primary,
+        backgroundColor: '#1D4ED8',
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 16,
     },
     buttonText: {
-        color: '#FFF',
+        color: '#FFFFFF',
         fontSize: 16,
         fontWeight: 'bold',
     },
     footerNote: {
         fontSize: 12,
-        color: COLORS.textLight,
+        color: '#64748B',
     },
 });

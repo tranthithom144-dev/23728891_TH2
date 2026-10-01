@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { STUDENT, examStamp } from '@constants/student';
-import { COLORS } from '@constants/theme';
+import { STUDENT, examStamp } from '../constants/student';
+import { COLORS } from '../constants/theme';
 
 export const Watermark = () => {
     return (

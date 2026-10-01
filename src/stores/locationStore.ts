@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { create } from 'zustand';
 import { Linking } from 'react-native';
 import { LocationService as Location } from '../services/location';
 import { BASE_SHIP_FEE, VARIANT } from '../constants/student';
@@ -20,42 +20,38 @@ function calculateHaversine(lat1: number, lon1: number, lat2: number, lon2: numb
     return R * c;
 }
 
-export function useCampusLocation() {
-    const [status, setStatus] = useState<'idle' | 'granted' | 'denied' | 'blocked'>('idle');
-    const [distanceKm, setDistanceKm] = useState<number | null>(null);
-    const [shipFee, setShipFee] = useState<number | null>(null);
+interface LocationState {
+    status: 'idle' | 'granted' | 'denied' | 'blocked';
+    distanceKm: number | null;
+    shipFee: number | null;
+    requestLocation: () => Promise<void>;
+    openSettings: () => void;
+}
 
-    const requestPermissionAndFetch = async () => {
+export const useLocationStore = create<LocationState>((set) => ({
+    status: 'idle',
+    distanceKm: null,
+    shipFee: null,
+    requestLocation: async () => {
         const { status: currentStatus, canAskAgain } = await Location.requestForegroundPermissionsAsync();
 
         if (currentStatus === 'granted') {
-            setStatus('granted');
             const loc = await Location.getCurrentPositionAsync({});
             const km = calculateHaversine(loc.coords.latitude, loc.coords.longitude, KTX_GATE_LAT, KTX_GATE_LON);
-            setDistanceKm(km);
 
             const fee =
                 VARIANT.shipFormula === 'A'
                     ? BASE_SHIP_FEE + Math.round(km * 2000)
                     : BASE_SHIP_FEE + Math.round(km * 1500) + 2000;
-            setShipFee(fee);
+
+            set({ status: 'granted', distanceKm: km, shipFee: fee });
         } else if (!canAskAgain) {
-            setStatus('blocked');
+            set({ status: 'blocked' });
         } else {
-            setStatus('denied');
+            set({ status: 'denied' });
         }
-    };
-
-    const openSettings = () => {
+    },
+    openSettings: () => {
         Linking.openSettings();
-    };
-
-    return {
-        status,
-        distanceKm,
-        shipFee,
-        requestLocation: requestPermissionAndFetch,
-        requestPermissionAndFetch,
-        openSettings,
-    };
-}
+    },
+}));

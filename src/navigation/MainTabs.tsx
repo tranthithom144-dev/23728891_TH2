@@ -1,11 +1,11 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ShopStack } from './ShopStack';
-import { CartScreen } from '@screens/CartScreen';
-import { MeScreen } from '@screens/MeScreen';
-import { useCartStore } from '@stores/cartStore';
-import { COLORS } from '@constants/theme';
-import { VARIANT } from '@constants/student';
+import { CartScreen } from '../screens/CartScreen';
+import { MeScreen } from '../screens/MeScreen';
+import { useCartStore } from '../stores/cartStore';
+import { COLORS } from '../constants/theme';
+import { VARIANT } from '../constants/student';
 
 const Tab = createBottomTabNavigator();
 
@@ -47,8 +47,26 @@ export const MainTabs = () => {
         <Tab.Navigator
             screenOptions={{
                 headerShown: false,
-                tabBarActiveTintColor: COLORS.primary,
-                tabBarInactiveTintColor: COLORS.textLight,
+                tabBarActiveTintColor: '#1D4ED8',
+                tabBarInactiveTintColor: '#64748B',
+                tabBarBadgeStyle: {
+                    backgroundColor: '#EA580C',
+                    color: '#FFFFFF',
+                    fontSize: 10,
+                    fontWeight: 'bold',
+                },
+                tabBarStyle: {
+                    backgroundColor: '#FFFFFF',
+                    borderTopColor: '#E2E8F0',
+                    borderTopWidth: 1,
+                    height: 52,
+                    paddingBottom: 6,
+                    paddingTop: 4,
+                },
+                tabBarLabelStyle: {
+                    fontSize: 12,
+                    fontWeight: '600',
+                },
             }}>
             {VARIANT.tabOrder === 'cartFirst' ? [cartTab, shopTab, meTab] : [shopTab, cartTab, meTab]}
         </Tab.Navigator>

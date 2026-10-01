@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { useAuthStore } from '@stores/authStore';
+import { useAuthStore } from '../stores/authStore';
 import { AuthStack } from './AuthStack';
 import { MainTabs } from './MainTabs';
 

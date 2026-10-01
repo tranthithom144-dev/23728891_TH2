@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { STUDENT, PRICE_MULTIPLIER } from '@constants/student';
-import { Product } from '@services/productApi';
+import { STUDENT, PRICE_MULTIPLIER } from '../constants/student';
+import { Product } from '../services/productApi';
 
 export interface CartItem {
     product: Product;
